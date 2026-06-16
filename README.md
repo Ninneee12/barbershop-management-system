@@ -1,16 +1,66 @@
-# React + Vite
+# Barbershop Management System
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Base tecnica com:
 
-Currently, two official plugins are available:
+- API minima para servicos e agendamentos
+- PostgreSQL com migration e seed inicial
+- Frontend React consumindo API
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## Stack
 
-## React Compiler
+- Frontend: React + Vite
+- Backend: Node.js + Express
+- Banco: PostgreSQL
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## Requisitos
 
-## Expanding the ESLint configuration
+- Node.js 18+
+- PostgreSQL 14+
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+## Configuracao
+
+1. Instale dependencias:
+
+```bash
+npm install
+```
+
+2. Crie um arquivo `.env` com base em `.env.example`.
+
+3. Garanta que o banco configurado em `DATABASE_URL` existe.
+
+4. Rode as migrations (inclui seed inicial):
+
+```bash
+npm run migrate
+```
+
+## Execucao
+
+1. Inicie a API:
+
+```bash
+npm run server
+```
+
+2. Em outro terminal, inicie o frontend:
+
+```bash
+npm run dev
+```
+
+## Endpoints minimos
+
+- `GET /api/services`
+- `POST /api/services`
+- `DELETE /api/services/:id`
+- `GET /api/appointments`
+- `POST /api/appointments`
+- `PATCH /api/appointments/:id/status`
+
+## Estrutura backend
+
+- `server/index.js`: API Express
+- `server/db.js`: conexao com PostgreSQL
+- `server/migrations/001_init.sql`: schema + seed
+- `server/scripts/migrate.js`: runner de migrations

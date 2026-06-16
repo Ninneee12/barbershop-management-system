@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { ArrowRight, Check, Ticket, Scissors, Sparkles } from 'lucide-react';
 import { BARBERS, TIME_SLOTS, getFutureDate } from '../data';
 import { interpolate } from '../i18n';
@@ -29,10 +29,6 @@ export default function Booking({ services, appointments, onBookingConfirmed, pr
   const [selectedTime, setSelectedTime] = useState('');
   const [form, setForm] = useState({ name: '', phone: '', email: '', notes: '' });
 
-  useEffect(() => {
-    if (preSelected) setSelectedService(preSelected);
-  }, [preSelected]);
-
   function reset() {
     setStep(1);
     setSelectedService(preSelected || null);
@@ -54,7 +50,7 @@ export default function Booking({ services, appointments, onBookingConfirmed, pr
     setStep(s => Math.max(1, s - 1));
   }
 
-  function handleSubmit() {
+  async function handleSubmit() {
     if (!form.name || !form.phone || !form.email) { alert(text.alertFillRequired); return; }
 
     const newAppt = {
@@ -73,14 +69,18 @@ export default function Booking({ services, appointments, onBookingConfirmed, pr
       status: 'Pending',
     };
 
-    onBookingConfirmed(newAppt);
-    alert(interpolate(text.confirmMessage, {
-      name: form.name,
-      barber: selectedBarber.name,
-      date: selectedDate,
-      time: selectedTime,
-    }));
-    reset();
+    try {
+      await onBookingConfirmed(newAppt);
+      alert(interpolate(text.confirmMessage, {
+        name: form.name,
+        barber: selectedBarber.name,
+        date: selectedDate,
+        time: selectedTime,
+      }));
+      reset();
+    } catch {
+      alert('Unable to save appointment. Please try again.');
+    }
   }
 
   const reservedSlots = appointments

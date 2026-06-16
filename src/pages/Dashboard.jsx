@@ -19,7 +19,7 @@ function StatusBadge({ status, text }) {
   );
 }
 
-export default function Dashboard({ appointments, services, onStatusChange, onAddService, onDeleteService, text, lang }) {
+export default function Dashboard({ appointments, services, onStatusChange, onAddService, onDeleteService, text }) {
   const [activeTab, setActiveTab] = useState('appointments');
   const [filterStatus, setFilterStatus] = useState('all');
   const [newService, setNewService] = useState({ name: '', price: '', duration: '', desc: '' });
@@ -32,23 +32,30 @@ export default function Dashboard({ appointments, services, onStatusChange, onAd
 
   const filtered = appointments.filter(a => filterStatus === 'all' || a.status === filterStatus);
 
-  function handleAddService(e) {
+  async function handleAddService(e) {
     e.preventDefault();
     const svc = {
-      id: 's_' + Date.now(),
       name: newService.name,
       price: Number(newService.price),
       duration: Number(newService.duration),
       desc: newService.desc,
     };
-    onAddService(svc);
-    setNewService({ name: '', price: '', duration: '', desc: '' });
-    alert(text.addSuccess.replace('{name}', svc.name));
+    try {
+      const saved = await onAddService(svc);
+      setNewService({ name: '', price: '', duration: '', desc: '' });
+      alert(text.addSuccess.replace('{name}', saved.name));
+    } catch {
+      alert('Unable to add service. Please try again.');
+    }
   }
 
-  function handleDelete(id) {
+  async function handleDelete(id) {
     if (confirm(text.deleteConfirm)) {
-      onDeleteService(id);
+      try {
+        await onDeleteService(id);
+      } catch {
+        alert('Unable to delete service. Please try again.');
+      }
     }
   }
 
@@ -168,14 +175,14 @@ export default function Dashboard({ appointments, services, onStatusChange, onAd
                         <td className="p-4 text-right">
                           <div className="flex items-center justify-end space-x-1.5">
                             <button
-                              onClick={() => onStatusChange(appt.id, 'Completed')}
+                              onClick={() => onStatusChange(appt.id, 'Completed').catch(() => alert('Unable to update appointment status.'))}
                               title={text.markCompleted}
                               className="p-2 bg-zinc-800 text-zinc-400 hover:text-green-500 rounded transition border-0"
                             >
                               <Check className="w-4 h-4" />
                             </button>
                             <button
-                              onClick={() => onStatusChange(appt.id, 'Cancelled')}
+                              onClick={() => onStatusChange(appt.id, 'Cancelled').catch(() => alert('Unable to update appointment status.'))}
                               title={text.cancelAppointment}
                               className="p-2 bg-zinc-800 text-zinc-400 hover:text-red-500 rounded transition border-0"
                             >
