@@ -256,11 +256,15 @@ app.patch("/api/appointments/:id/status", async (req, res, next) => {
   }
 });
 
-app.use((error, _req, res) => {
+app.use((error, _req, res, _next) => {
   console.error(error);
   res.status(500).json({ message: "Internal server error." });
 });
 
-app.listen(port, () => {
-  console.log(`API running on http://localhost:${port}`);
-});
+if (process.env.VERCEL !== "1") {
+  app.listen(port, () => {
+    console.log(`API running on http://localhost:${port}`);
+  });
+}
+
+export default app;
