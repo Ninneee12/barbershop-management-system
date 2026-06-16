@@ -1,20 +1,43 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import Home from './pages/Home';
 import Services from './pages/Services';
 import Booking from './pages/Booking';
 import Dashboard from './pages/Dashboard';
-import { INITIAL_SERVICES, INITIAL_APPOINTMENTS, getStored, setStored } from './data';
+import { createAppointment, createService, deleteService, fetchAppointments, fetchServices, updateAppointmentStatus } from './services/api';
 import { TRANSLATIONS } from './i18n';
 
 export default function App() {
   const [page, setPage] = useState('home');
   const [lang, setLang] = useState('en');
-  const [services, setServices] = useState(() => getStored('barber_services', INITIAL_SERVICES));
-  const [appointments, setAppointments] = useState(() => getStored('barber_appointments', INITIAL_APPOINTMENTS));
+  const [services, setServices] = useState([]);
+  const [appointments, setAppointments] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
   const [preSelectedService, setPreSelectedService] = useState(null);
   const text = TRANSLATIONS[lang];
+
+  useEffect(() => {
+    async function loadInitialData() {
+      try {
+        setLoading(true);
+        setError('');
+        const [servicesData, appointmentsData] = await Promise.all([
+          fetchServices(),
+          fetchAppointments(),
+        ]);
+        setServices(servicesData);
+        setAppointments(appointmentsData);
+      } catch {
+        setError('Unable to connect to API. Check backend server and database.');
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    loadInitialData();
+  }, []);
 
   function navigate(target) {
     if (target !== 'booking') setPreSelectedService(null);
@@ -26,29 +49,42 @@ export default function App() {
     setPreSelectedService(service);
   }
 
-  function handleBookingConfirmed(appt) {
-    const updated = [appt, ...appointments];
-    setAppointments(updated);
-    setStored('barber_appointments', updated);
+  async function handleBookingConfirmed(appt) {
+    const saved = await createAppointment(appt);
+    setAppointments(current => [saved, ...current]);
     navigate('home');
   }
 
-  function handleStatusChange(id, status) {
-    const updated = appointments.map(a => a.id === id ? { ...a, status } : a);
-    setAppointments(updated);
-    setStored('barber_appointments', updated);
+  async function handleStatusChange(id, status) {
+    const updatedAppt = await updateAppointmentStatus(id, status);
+    setAppointments(current => current.map(a => (a.id === id ? updatedAppt : a)));
   }
 
-  function handleAddService(svc) {
-    const updated = [...services, svc];
-    setServices(updated);
-    setStored('barber_services', updated);
+  async function handleAddService(svc) {
+    const saved = await createService(svc);
+    setServices(current => [...current, saved]);
+    return saved;
   }
 
-  function handleDeleteService(id) {
-    const updated = services.filter(s => s.id !== id);
-    setServices(updated);
-    setStored('barber_services', updated);
+  async function handleDeleteService(id) {
+    await deleteService(id);
+    setServices(current => current.filter(s => s.id !== id));
+  }
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-zinc-950 text-zinc-100 flex items-center justify-center">
+        <p className="text-zinc-300 text-sm">Loading data...</p>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen bg-zinc-950 text-zinc-100 flex items-center justify-center px-4">
+        <p className="text-red-400 text-sm text-center">{error}</p>
+      </div>
+    );
   }
 
   return (
@@ -82,7 +118,6 @@ export default function App() {
             onAddService={handleAddService}
             onDeleteService={handleDeleteService}
             text={text.dashboard}
-            lang={lang}
           />
         )}
       </main>
