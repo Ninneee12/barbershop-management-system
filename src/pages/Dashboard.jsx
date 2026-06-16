@@ -38,7 +38,7 @@ export default function Dashboard({ appointments, services, onStatusChange, onAd
       name: newService.name,
       price: Number(newService.price),
       duration: Number(newService.duration),
-      desc: newService.desc,
+      desc: newService.description,
     };
     try {
       const saved = await onAddService(svc);
@@ -248,7 +248,7 @@ export default function Dashboard({ appointments, services, onStatusChange, onAd
                   <textarea
                     required
                     placeholder="Describe what is offered in this specific service..."
-                    value={newService.desc}
+                    value={newService.description}
                     onChange={e => setNewService(s => ({ ...s, desc: e.target.value }))}
                     className="w-full bg-zinc-950 border border-zinc-800 text-zinc-100 rounded-lg p-2.5 text-sm h-20 focus:outline-none focus:border-gold-500 resize-none"
                   />
@@ -282,7 +282,7 @@ export default function Dashboard({ appointments, services, onStatusChange, onAd
                       <tr key={serv.id} className="hover:bg-zinc-900/40 transition duration-150">
                         <td className="p-4">
                           <div className="font-medium text-white">{serv.name}</div>
-                          <p className="text-xs text-zinc-500 truncate max-w-sm" title={serv.desc}>{serv.desc}</p>
+                          <p className="text-xs text-zinc-500 truncate max-w-sm" title={serv.description}>{serv.description}</p>
                         </td>
                         <td className="p-4 text-zinc-300 text-sm">{serv.duration} {text.mins}</td>
                         <td className="p-4 text-right font-bold text-gold-400 text-sm">${serv.price}</td>
