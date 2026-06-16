@@ -49,7 +49,7 @@ export default function Home({ navigate, text }) {
                   {featureIcons[index]}
                 </div>
                 <h3 className="text-lg font-semibold mb-2">{feature.title}</h3>
-                <p className="text-zinc-400 text-sm">{feature.desc}</p>
+                <p className="text-zinc-400 text-sm">{feature.description}</p>
               </div>
             ))}
           </div>

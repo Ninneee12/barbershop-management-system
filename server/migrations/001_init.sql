@@ -3,7 +3,7 @@ CREATE TABLE IF NOT EXISTS services (
   name TEXT NOT NULL,
   price NUMERIC(10,2) NOT NULL CHECK (price >= 0),
   duration INTEGER NOT NULL CHECK (duration > 0),
-  desc TEXT NOT NULL,
+  description TEXT NOT NULL,
   created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
@@ -24,7 +24,7 @@ CREATE TABLE IF NOT EXISTS appointments (
   created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
-INSERT INTO services (id, name, price, duration, desc)
+INSERT INTO services (id, name, price, duration, description)
 VALUES
   ('s1', 'Precision Haircut', 35, 30, 'Tailored consultation followed by a luxury cleanse, customized clipper/scissor work, and custom styling.'),
   ('s2', 'The Sculpted Beard', 25, 25, 'Detailed beard detailing, hot towels, razor profile outlining, and specialized beard oils.'),
