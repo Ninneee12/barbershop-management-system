@@ -17,7 +17,7 @@ function mapService(row) {
     name: row.name,
     price: Number(row.price),
     duration: row.duration,
-    desc: row.desc,
+    description: row.description,
   };
 }
 
@@ -51,7 +51,7 @@ app.get("/health", async (_req, res) => {
 app.get("/api/services", async (_req, res, next) => {
   try {
     const result = await pool.query(
-      "SELECT id, name, price, duration, desc FROM services ORDER BY created_at ASC",
+      "SELECT id, name, price, duration, description FROM services ORDER BY created_at ASC",
     );
     res.json(result.rows.map(mapService));
   } catch (error) {
@@ -61,20 +61,20 @@ app.get("/api/services", async (_req, res, next) => {
 
 app.post("/api/services", async (req, res, next) => {
   try {
-    const { name, price, duration, desc } = req.body;
+    const { name, price, duration, description } = req.body;
 
-    if (!name || !desc || Number(price) <= 0 || Number(duration) <= 0) {
+    if (!name || !description || Number(price) <= 0 || Number(duration) <= 0) {
       return res.status(400).json({ message: "Invalid service payload." });
     }
 
     const id = createId("s");
     const result = await pool.query(
       `
-      INSERT INTO services (id, name, price, duration, desc)
+      INSERT INTO services (id, name, price, duration, description)
       VALUES ($1, $2, $3, $4, $5)
-      RETURNING id, name, price, duration, desc
+      RETURNING id, name, price, duration, description
       `,
-      [id, name, Number(price), Number(duration), desc],
+      [id, name, Number(price), Number(duration), description],
     );
 
     res.status(201).json(mapService(result.rows[0]));

@@ -27,7 +27,7 @@ export default function Services({ services, navigate, preSelectService, text })
                   <h3 className="font-serif text-xl font-bold text-white">{serv.name}</h3>
                   <span className="text-gold-400 font-bold text-lg">${serv.price}</span>
                 </div>
-                <p className="text-zinc-400 text-sm mb-6 leading-relaxed">{serv.desc}</p>
+                <p className="text-zinc-400 text-sm mb-6 leading-relaxed">{serv.description}</p>
               </div>
               <div className="flex justify-between items-center pt-4 border-t border-zinc-800/60 text-xs text-zinc-500">
                 <span className="flex items-center gap-1">
