@@ -1,6 +1,7 @@
 import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
+import { fileURLToPath } from "url";
 import { pool } from "./db.js";
 
 dotenv.config();
@@ -256,12 +257,14 @@ app.patch("/api/appointments/:id/status", async (req, res, next) => {
   }
 });
 
-app.use((error, _req, res, _next) => {
+app.use((error, _req, res) => {
   console.error(error);
   res.status(500).json({ message: "Internal server error." });
 });
 
-if (process.env.VERCEL !== "1") {
+// Only start the HTTP server when run directly (local dev: `npm run server`)
+const isMain = process.argv[1] === fileURLToPath(import.meta.url);
+if (isMain) {
   app.listen(port, () => {
     console.log(`API running on http://localhost:${port}`);
   });

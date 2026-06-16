@@ -1,3 +1,3 @@
-import app from "../server/index.js";
-
-export default app;
+// Serverless entry point for Vercel.
+// The Express app is imported without starting an HTTP listener.
+export { default } from "../server/index.js";
