@@ -1,6 +1,6 @@
-const API_BASE_URL =
-  import.meta.env.VITE_API_URL ||
-  (import.meta.env.DEV ? "http://localhost:3001" : "");
+// In production (Vercel) frontend and API share the same origin, so use relative URLs.
+// In local dev, Vite proxies /api → http://localhost:3001, so empty string also works.
+const API_BASE_URL = import.meta.env.VITE_API_URL || "";
 
 async function request(path, options = {}) {
   const response = await fetch(`${API_BASE_URL}${path}`, {
